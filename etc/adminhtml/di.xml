@@ -1,0 +1,100 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Eriocnemis, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <!-- preference -->
+    <preference for="Eriocnemis\RegionShippingRuleAdminUi\Api\ResolveRuleInterface" type="Eriocnemis\RegionShippingRuleAdminUi\Model\ResolveRule"/>
+    <!-- buttons configurations -->
+    <virtualType name="EriocnemisRegionShippingRuleSaveButton" type="Eriocnemis\RegionAdminUi\Ui\Component\Control\SaveSplitButton">
+        <arguments>
+            <argument name="targetName" xsi:type="string">eriocnemis_region_shipping_rule_form.eriocnemis_region_shipping_rule_form</argument>
+            <argument name="aclResource" xsi:type="string">Eriocnemis_Region::shipping_rule_edit</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="EriocnemisRegionShippingRuleDeleteButton" type="Eriocnemis\RegionAdminUi\Ui\Component\Control\DeleteButton">
+        <arguments>
+            <argument name="idFieldName" xsi:type="const">Eriocnemis\RegionShippingRuleApi\Api\Data\RuleInterface::RULE_ID</argument>
+            <argument name="aclResource" xsi:type="string">Eriocnemis_Region::shipping_rule_delete</argument>
+            <argument name="sortOrder" xsi:type="number">30</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="EriocnemisRegionShippingRuleAddButton" type="Eriocnemis\RegionAdminUi\Ui\Component\Control\AddButton">
+        <arguments>
+            <argument name="aclResource" xsi:type="string">Eriocnemis_Region::shipping_rule_edit</argument>
+            <argument name="sortOrder" xsi:type="number">30</argument>
+        </arguments>
+    </virtualType>
+    <!-- form data provider configurations -->
+    <virtualType name="EriocnemisRegionFormModifierPool">
+        <arguments>
+            <argument name="modifiers" xsi:type="array">
+                <item name="shipping" xsi:type="array">
+                    <item name="class" xsi:type="string">Eriocnemis\RegionShippingRuleAdminUi\Ui\DataProvider\Region\Modifier\Form\Shipping</item>
+                    <item name="sortOrder" xsi:type="number">10</item>
+                </item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="EriocnemisRegionShippingRuleFormModifierPool" type="Magento\Ui\DataProvider\Modifier\Pool">
+        <arguments>
+            <argument name="modifiers" xsi:type="array">
+                <item name="general" xsi:type="array">
+                    <item name="class" xsi:type="string">Eriocnemis\RegionShippingRuleAdminUi\Ui\DataProvider\Rule\Modifier\Form\General</item>
+                    <item name="sortOrder" xsi:type="number">1</item>
+                </item>
+                <item name="shipping" xsi:type="array">
+                    <item name="class" xsi:type="string">Eriocnemis\RegionShippingRuleAdminUi\Ui\DataProvider\Rule\Modifier\Form\Shipping</item>
+                    <item name="sortOrder" xsi:type="number">2</item>
+                </item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <!-- data provider configurations -->
+    <virtualType name="EriocnemisRegionShippingRuleListingModifierPool" type="Magento\Ui\DataProvider\Modifier\Pool"/>
+    <type name="Eriocnemis\RegionShippingRuleAdminUi\Ui\DataProvider\Rule\FormDataProvider">
+        <arguments>
+            <argument name="modifierPool" xsi:type="object">EriocnemisRegionShippingRuleFormModifierPool</argument>
+        </arguments>
+    </type>
+    <type name="Eriocnemis\RegionShippingRuleAdminUi\Ui\DataProvider\Rule\ListingDataProvider">
+        <arguments>
+            <argument name="modifierPool" xsi:type="object">EriocnemisRegionShippingRuleListingModifierPool</argument>
+        </arguments>
+    </type>
+    <type name="Magento\Framework\EntityManager\MapperPool">
+        <arguments>
+            <argument name="mappers" xsi:type="array">
+                <item name="Eriocnemis\RegionShippingRuleApi\Api\Data\RuleInterface" xsi:type="string">EriocnemisRegionShippingRuleMapper</item>
+            </argument>
+        </arguments>
+    </type>
+    <virtualType name="EriocnemisRegionShippingRuleMapper" type="Magento\Framework\EntityManager\Mapper">
+        <arguments>
+            <argument name="config" xsi:type="array">
+                <item name="Eriocnemis\RegionShippingRuleApi\Api\Data\RuleInterface" xsi:type="array">
+                    <item name="rule_id" xsi:type="string">id</item>
+                </item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <type name="Magento\Framework\Reflection\DataObjectProcessor">
+        <arguments>
+            <argument name="processors" xsi:type="array">
+                <item name="Eriocnemis\RegionShippingRuleApi\Api\Data\RuleInterface" xsi:type="object">Eriocnemis\RegionShippingRuleAdminUi\Model\Rule\OutputProcessor</item>
+            </argument>
+        </arguments>
+    </type>
+    <!-- hydrator configuration -->
+    <type name="Eriocnemis\RegionAdminUi\Model\Region\HydratorInterface">
+        <arguments>
+            <argument name="hydrators" xsi:type="array">
+                <item name="eriocnemis_region_shipping_rule" xsi:type="object">Eriocnemis\RegionShippingRuleAdminUi\Model\HydrateRuleIds</item>
+            </argument>
+        </arguments>
+    </type>
+</config>

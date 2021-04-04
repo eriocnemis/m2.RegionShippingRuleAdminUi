@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * Copyright © Eriocnemis, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<form xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
+    <fieldset name="shipping" sortOrder="30">
+        <settings>
+            <collapsible>true</collapsible>
+            <label translate="true">Shipping Method Rules</label>
+            <additionalClasses>
+                <class name="admin__fieldset-section">true</class>
+            </additionalClasses>
+        </settings>
+        <container name="shipping_rule_button_set" template="ui/form/components/complex">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="label" xsi:type="string"/>
+                </item>
+            </argument>
+            <button name="shipping_rule_button">
+                <settings>
+                    <title translate="true">Add Rule</title>
+                </settings>
+            </button>
+        </container>
+        <modal name="shipping_rule_modal">
+            <settings>
+                <options>
+                    <option name="title" xsi:type="string">Add Shipping Method Rules</option>
+                </options>
+            </settings>
+            <insertListing name="eriocnemis_region_relation_shipping_rule_listing">
+                <settings>
+                    <autoRender>false</autoRender>
+                    <realTimeLink>true</realTimeLink>
+                    <dataLinks>
+                        <imports>false</imports>
+                        <exports>true</exports>
+                    </dataLinks>
+                    <behaviourType>simple</behaviourType>
+                    <externalFilterMode>true</externalFilterMode>
+                    <imports>
+                        <link name="regionId">${ $.provider }:region.region_id</link>
+                    </imports>
+                    <exports>
+                        <link name="regionId">${ $.externalProvider }:params.region_id</link>
+                    </exports>
+                </settings>
+            </insertListing>
+        </modal>
+        <dynamicRows name="shipping_rules">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="columnsHeaderAfterRender" xsi:type="boolean">true</item>
+                    <item name="renderDefaultRecord" xsi:type="boolean">false</item>
+                    <item name="deleteButtonLabel" xsi:type="string">Remove</item>
+                    <item name="identificationDRProperty" xsi:type="string">rule_id</item>
+                    <item name="map" xsi:type="array">
+                        <item name="rule_id" xsi:type="string">rule_id</item>
+                        <item name="name" xsi:type="string">name</item>
+                        <item name="description" xsi:type="string">description</item>
+                        <item name="from_date" xsi:type="string">from_date</item>
+                        <item name="to_date" xsi:type="string">to_date</item>
+                        <item name="website_ids" xsi:type="string">website_ids</item>
+                        <item name="status" xsi:type="string">status_label</item>
+                    </item>
+                </item>
+            </argument>
+            <settings>
+                <additionalClasses>
+                    <class name="admin__field-wide">true</class>
+                </additionalClasses>
+                <columnsHeader>false</columnsHeader>
+                <recordTemplate>record</recordTemplate>
+                <links>
+                    <link name="insertData">${ $.provider }:${ $.dataProvider }</link>
+                </links>
+                <addButton>false</addButton>
+                <dataScope>data.region</dataScope>
+                <componentType>dynamicRows</componentType>
+                <dndConfig>
+                    <param name="enabled" xsi:type="boolean">false</param>
+                </dndConfig>
+                <identificationProperty>rule_id</identificationProperty>
+                <deleteProperty>delete</deleteProperty>
+            </settings>
+            <container name="record" component="Magento_Ui/js/dynamic-rows/record">
+                <argument name="data" xsi:type="array">
+                    <item name="config" xsi:type="array">
+                        <item name="componentType" xsi:type="string">container</item>
+                        <item name="isTemplate" xsi:type="boolean">true</item>
+                        <item name="is_collection" xsi:type="boolean">true</item>
+                    </item>
+                </argument>
+                <field name="rule_id" component="Magento_Ui/js/form/element/text" formElement="input" sortOrder="20">
+                    <settings>
+                        <label translate="true">ID</label>
+                        <dataType>text</dataType>
+                        <elementTmpl>ui/dynamic-rows/cells/text</elementTmpl>
+                    </settings>
+                </field>
+                <field name="name" component="Magento_Ui/js/form/element/text" formElement="input" sortOrder="30">
+                    <settings>
+                        <label translate="true">Name</label>
+                        <dataType>text</dataType>
+                        <elementTmpl>ui/dynamic-rows/cells/text</elementTmpl>
+                    </settings>
+                </field>
+                <field name="description" component="Magento_Ui/js/form/element/text" formElement="input" sortOrder="40">
+                    <settings>
+                        <label translate="true">Description</label>
+                        <dataType>text</dataType>
+                        <elementTmpl>ui/dynamic-rows/cells/text</elementTmpl>
+                    </settings>
+                </field>
+                <field name="from_date" component="Magento_Ui/js/form/element/text" formElement="input" sortOrder="50">
+                    <settings>
+                        <label translate="true">Start Date</label>
+                        <dataType>date</dataType>
+                        <elementTmpl>ui/dynamic-rows/cells/text</elementTmpl>
+                    </settings>
+                </field>
+                <field name="to_date" component="Magento_Ui/js/form/element/text" formElement="input" sortOrder="60">
+                    <settings>
+                        <label translate="true">End Date</label>
+                        <dataType>date</dataType>
+                        <elementTmpl>ui/dynamic-rows/cells/text</elementTmpl>
+                    </settings>
+                </field>
+                <field name="website_ids" component="Magento_Ui/js/form/element/text" formElement="input" sortOrder="70">
+                    <settings>
+                        <label translate="true">Websites</label>
+                        <dataType>text</dataType>
+                        <elementTmpl>ui/dynamic-rows/cells/text</elementTmpl>
+                    </settings>
+                </field>
+                <field name="status" component="Magento_Ui/js/form/element/text" formElement="input" sortOrder="80">
+                    <settings>
+                        <label translate="true">Status</label>
+                        <dataType>text</dataType>
+                        <elementTmpl>ui/dynamic-rows/cells/text</elementTmpl>
+                    </settings>
+                </field>
+                <actionDelete sortOrder="90">
+                    <argument name="data" xsi:type="array">
+                        <item name="config" xsi:type="array">
+                            <item name="fit" xsi:type="boolean">false</item>
+                        </item>
+                    </argument>
+                    <settings>
+                        <additionalClasses>
+                            <class name="data-grid-actions-cell">true</class>
+                        </additionalClasses>
+                        <dataType>text</dataType>
+                        <label>Actions</label>
+                        <componentType>actionDelete</componentType>
+                    </settings>
+                </actionDelete>
+            </container>
+        </dynamicRows>
+    </fieldset>
+</form>

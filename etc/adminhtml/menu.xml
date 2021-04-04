@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Eriocnemis, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
+    <menu>
+        <add id="Eriocnemis_Region::shipping_rule"
+             title="Shipping Rules"
+             translate="title"
+             module="Eriocnemis_RegionShippingRuleAdminUi"
+             sortOrder="20"
+             parent="Eriocnemis_Region::geography"
+             action="eriocnemis_region/shipping_rule"
+             resource="Eriocnemis_Region::shipping_rule"/>
+    </menu>
+</config>

@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * Copyright © Eriocnemis, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<listing xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
+    <argument name="data" xsi:type="array">
+        <item name="js_config" xsi:type="array">
+            <item name="provider" xsi:type="string">eriocnemis_region_shipping_rule_listing.eriocnemis_region_shipping_rule_listing_data_source</item>
+        </item>
+    </argument>
+    <settings>
+        <buttons>
+            <button name="add" class="EriocnemisRegionShippingRuleAddButton"/>
+        </buttons>
+        <spinner>eriocnemis_region_shipping_rule_columns</spinner>
+        <deps>
+            <dep>eriocnemis_region_shipping_rule_listing.eriocnemis_region_shipping_rule_listing_data_source</dep>
+        </deps>
+    </settings>
+    <dataSource name="eriocnemis_region_shipping_rule_listing_data_source" component="Magento_Ui/js/grid/provider">
+        <settings>
+            <storageConfig>
+                <param name="indexField" xsi:type="string">rule_id</param>
+            </storageConfig>
+            <updateUrl path="mui/index/render"/>
+        </settings>
+        <aclResource>Eriocnemis_Region::shipping_rule</aclResource>
+        <dataProvider class="Eriocnemis\RegionShippingRuleAdminUi\Ui\DataProvider\Rule\ListingDataProvider" name="eriocnemis_region_shipping_rule_listing_data_source">
+            <settings>
+                <requestFieldName>rule_id</requestFieldName>
+                <primaryFieldName>rule_id</primaryFieldName>
+            </settings>
+        </dataProvider>
+    </dataSource>
+    <listingToolbar name="listing_top">
+        <settings>
+            <sticky>true</sticky>
+        </settings>
+        <bookmark name="bookmarks"/>
+        <columnsControls name="columns_controls"/>
+        <filterSearch name="name"/>
+        <filters name="listing_filters">
+            <settings>
+                <templates>
+                    <filters>
+                        <select>
+                            <param name="template" xsi:type="string">ui/grid/filters/elements/ui-select</param>
+                            <param name="component" xsi:type="string">Magento_Ui/js/form/element/ui-select</param>
+                        </select>
+                    </filters>
+                </templates>
+            </settings>
+        </filters>
+        <massaction name="listing_massaction" component="Magento_Ui/js/grid/tree-massactions" class="Eriocnemis\RegionShippingRuleAdminUi\Ui\Component\MassAction">
+            <action name="delete">
+                <settings>
+                    <type>delete</type>
+                    <label translate="true">Delete</label>
+                    <url path="*/*/massDelete"/>
+                    <confirm>
+                        <message translate="true">Delete selected items?</message>
+                        <title translate="true">Delete items</title>
+                    </confirm>
+                </settings>
+            </action>
+            <action name="status">
+                <settings>
+                    <type>status</type>
+                    <label translate="true">Change status</label>
+                    <actions>
+                        <action name="0">
+                            <type>enable</type>
+                            <label translate="true">Enable</label>
+                            <url path="*/*/massStatus">
+                                <param name="status">1</param>
+                            </url>
+                        </action>
+                        <action name="1">
+                            <type>disable</type>
+                            <label translate="true">Disable</label>
+                            <url path="*/*/massStatus">
+                                <param name="status">0</param>
+                            </url>
+                        </action>
+                    </actions>
+                </settings>
+            </action>
+        </massaction>
+        <exportButton name="export_button"/>
+        <paging name="listing_paging"/>
+    </listingToolbar>
+    <columns name="eriocnemis_region_shipping_rule_columns">
+        <settings>
+            <childDefaults>
+                <param name="fieldAction" xsi:type="array">
+                    <item name="provider" xsi:type="string">eriocnemis_region_shipping_rule_listing.eriocnemis_region_shipping_rule_listing.eriocnemis_region_shipping_rule_columns.actions</item>
+                    <item name="target" xsi:type="string">applyAction</item>
+                    <item name="params" xsi:type="array">
+                        <item name="0" xsi:type="string">edit</item>
+                        <item name="1" xsi:type="string">${ $.$data.rowIndex }</item>
+                    </item>
+                </param>
+            </childDefaults>
+        </settings>
+        <selectionsColumn name="ids" sortOrder="10">
+            <settings>
+                <indexField>rule_id</indexField>
+            </settings>
+        </selectionsColumn>
+        <column name="rule_id" sortOrder="20">
+            <settings>
+                <label translate="true">Rule ID</label>
+            </settings>
+        </column>
+        <column name="name" sortOrder="30">
+            <settings>
+                <label translate="true">Name</label>
+                <filter>text</filter>
+            </settings>
+        </column>
+        <column name="description" sortOrder="40" class="Eriocnemis\RegionShippingRuleAdminUi\Ui\Component\Listing\Columns\Description">
+            <settings>
+                <label translate="true">Description</label>
+                <filter>text</filter>
+            </settings>
+        </column>
+        <column name="methods_access" component="Magento_Ui/js/grid/columns/select" sortOrder="50">
+            <settings>
+                <label translate="true">Methods Access</label>
+                <filter>select</filter>
+                <dataType>select</dataType>
+                <options class="Eriocnemis\RegionShippingRuleAdminUi\Model\System\Config\Source\MethodsAccess"/>
+            </settings>
+        </column>
+        <column name="from_date" sortOrder="60">
+            <settings>
+                <label translate="true">Start Date</label>
+                <filter>dateRange</filter>
+                <dataType>date</dataType>
+            </settings>
+        </column>
+        <column name="to_date" sortOrder="70">
+            <settings>
+                <label translate="true">End Date</label>
+                <filter>dateRange</filter>
+                <dataType>date</dataType>
+            </settings>
+        </column>
+        <column name="website_ids" class="Eriocnemis\RegionShippingRuleAdminUi\Ui\Component\Listing\Columns\Websites" sortOrder="80">
+            <settings>
+                <dataType>text</dataType>
+                <label translate="true">Websites</label>
+                <sortable>false</sortable>
+            </settings>
+        </column>
+        <column name="status" component="Magento_Ui/js/grid/columns/select" sortOrder="200">
+            <settings>
+                <label translate="true">Status</label>
+                <filter>select</filter>
+                <dataType>select</dataType>
+                <options class="Eriocnemis\RegionShippingRuleAdminUi\Model\System\Config\Source\Status"/>
+            </settings>
+        </column>
+        <actionsColumn name="actions" class="Magento\Backend\Ui\Component\Listing\Column\EditAction" sortOrder="210">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="editUrlPath" xsi:type="string">eriocnemis_region/shipping_rule/edit</item>
+                </item>
+            </argument>
+            <settings>
+                <indexField>rule_id</indexField>
+                <visible>false</visible>
+            </settings>
+        </actionsColumn>
+    </columns>
+</listing>
