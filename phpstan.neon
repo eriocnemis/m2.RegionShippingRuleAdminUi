@@ -1,0 +1,11 @@
+parameters:
+    checkExplicitMixedMissingReturn: true
+    checkPhpDocMissingReturn: true
+    reportUnmatchedIgnoredErrors: false
+    ignoreErrors:
+        - '#Method (?:.*?) has parameter \$collection with no value type specified in iterable type Magento\\Framework\\Data\\Collection\\AbstractDb.#'
+        - '#Call to an undefined method Magento\\Framework\\App\\RequestInterface::getPost\(\).#'
+        - '#Call to an undefined method Magento\\Framework\\App\\RequestInterface::isPost\(\).#'
+        - '#method Magento\\Framework\\Data\\Collection::walk\(\) expects callable\(\):#'
+        - '#Call to an undefined method Magento\\Store\\Api\\Data\\WebsiteInterface::getWebsiteId\(\)#'
+        - '#Cannot call method setShippingRuleIds\(\) on Eriocnemis\\RegionApi\\Api\\Data\\RegionExtensionInterface\|null#'

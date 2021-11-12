@@ -135,7 +135,6 @@
             <settings>
                 <dataType>field</dataType>
                 <label translate="true">Methods</label>
-                <multiple>true</multiple>
             </settings>
         </field>
     </fieldset>

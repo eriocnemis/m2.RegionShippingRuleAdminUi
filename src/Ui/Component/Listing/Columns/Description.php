@@ -28,8 +28,8 @@ class Description extends Column
      * @param ContextInterface $context
      * @param UiComponentFactory $uiComponentFactory
      * @param Filter $filter
-     * @param array $components
-     * @param array $data
+     * @param mixed[] $components
+     * @param mixed[] $data
      */
     public function __construct(
         ContextInterface $context,
@@ -51,8 +51,8 @@ class Description extends Column
     /**
      * Prepare data source
      *
-     * @param array $dataSource
-     * @return array
+     * @param mixed[] $dataSource
+     * @return mixed[]
      */
     public function prepareDataSource(array $dataSource)
     {

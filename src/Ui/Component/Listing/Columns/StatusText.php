@@ -29,8 +29,8 @@ class StatusText extends Column
      * @param ContextInterface $context
      * @param UiComponentFactory $uiComponentFactory
      * @param StatusSource $statusSource
-     * @param array $components
-     * @param array $data
+     * @param mixed[] $components
+     * @param mixed[] $data
      */
     public function __construct(
         ContextInterface $context,

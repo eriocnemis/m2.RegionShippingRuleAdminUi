@@ -213,11 +213,11 @@ class Shipping implements ModifierInterface
     {
         if (isset($data[RuleInterface::WEBSITE_IDS])) {
                 $websites = [];
-                foreach ($data[RuleInterface::WEBSITE_IDS] as $websiteId) {
-                    if (isset($this->websites[$websiteId])) {
-                        $websites[] = $this->websites[$websiteId];
-                    }
+            foreach ($data[RuleInterface::WEBSITE_IDS] as $websiteId) {
+                if (isset($this->websites[$websiteId])) {
+                    $websites[] = $this->websites[$websiteId];
                 }
+            }
                 $data[RuleInterface::WEBSITE_IDS] = implode(', ', $websites);
         }
         return $data;
