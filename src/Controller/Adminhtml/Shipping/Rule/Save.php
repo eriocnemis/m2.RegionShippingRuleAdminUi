@@ -7,17 +7,14 @@ declare(strict_types=1);
 
 namespace Eriocnemis\RegionShippingRuleAdminUi\Controller\Adminhtml\Shipping\Rule;
 
-use Psr\Log\LoggerInterface;
 use Magento\Backend\App\Action;
 use Magento\Backend\App\Action\Context;
-use Magento\Framework\App\Action\HttpPostActionInterface;
+use Magento\Framework\Controller\ResultInterface;
 use Magento\Framework\Controller\Result\Redirect;
-use Magento\Framework\Exception\LocalizedException;
-use Magento\Framework\Validation\ValidationException;
-use Magento\Framework\App\Request\DataPersistorInterface;
+use Magento\Framework\App\Action\HttpPostActionInterface;
+use Eriocnemis\Core\Exception\ResolveExceptionInterface;
 use Eriocnemis\RegionShippingRuleApi\Api\Data\RuleInterface;
-use Eriocnemis\RegionShippingRuleApi\Api\SaveRuleInterface;
-use Eriocnemis\RegionShippingRuleAdminUi\Api\ResolveRuleInterface;
+use Eriocnemis\RegionShippingRuleAdminUi\Api\SaveRuleDataInterface;
 
 /**
  * Save controller
@@ -30,45 +27,34 @@ class Save extends Action implements HttpPostActionInterface
     const ADMIN_RESOURCE = 'Eriocnemis_Region::shipping_rule_edit';
 
     /**
-     * @var ResolveRuleInterface
+     * Action name constant
      */
-    private $resolveRule;
+    const ACTION_NAME = 'save';
 
     /**
-     * @var SaveRuleInterface
+     * @var SaveRuleDataInterface
      */
-    private $saveRule;
+    private $saveRuleData;
 
     /**
-     * @var DataPersistorInterface
+     * @var ResolveExceptionInterface
      */
-    private $dataPersistor;
-
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
+    private $resolveException;
 
     /**
      * Initialize controller
      *
      * @param Context $context
-     * @param ResolveRuleInterface $resolveRule
-     * @param SaveRuleInterface $saveRule
-     * @param DataPersistorInterface $dataPersistor
-     * @param LoggerInterface $logger
+     * @param SaveRuleDataInterface $saveRuleData
+     * @param ResolveExceptionInterface $resolveException
      */
     public function __construct(
         Context $context,
-        ResolveRuleInterface $resolveRule,
-        SaveRuleInterface $saveRule,
-        DataPersistorInterface $dataPersistor,
-        LoggerInterface $logger
+        SaveRuleDataInterface $saveRuleData,
+        ResolveExceptionInterface $resolveException
     ) {
-        $this->resolveRule = $resolveRule;
-        $this->saveRule = $saveRule;
-        $this->dataPersistor = $dataPersistor;
-        $this->logger = $logger;
+        $this->saveRuleData = $saveRuleData;
+        $this->resolveException = $resolveException;
 
         parent::__construct(
             $context
@@ -78,90 +64,62 @@ class Save extends Action implements HttpPostActionInterface
     /**
      * Save rule
      *
-     * @return Redirect
+     * @return ResultInterface
      */
-    public function execute(): Redirect
+    public function execute(): ResultInterface
     {
-        $data = $this->getRequest()->getPost('rule');
-        $ruleId = $data[RuleInterface::RULE_ID] ?? null;
-
+        $ruleId = (int)$this->getRequest()->getPost(RuleInterface::RULE_ID);
         /** @var Redirect $result */
         $result = $this->resultRedirectFactory->create();
-        if (!$this->getRequest()->isPost() || empty($data)) {
-            $this->messageManager->addErrorMessage(
-                (string)__('Wrong request.')
-            );
-            $this->redirectAfterFailure($result);
-            return $result;
-        }
 
         try {
-            $this->dataPersistor->set('eriocnemis_region_shipping_rule', $data);
-            $rule = $this->resolveRule->execute($ruleId, $data);
-            $rule = $this->saveRule->execute($rule);
-            $this->messageManager->addSuccessMessage(
-                (string)__('The Rule has been saved.')
-            );
-            $this->redirectAfterSuccess($result, (int)$rule->getId());
-        } catch (ValidationException $e) {
-            foreach ($e->getErrors() as $error) {
-                $this->messageManager->addErrorMessage(
-                    $error->getMessage()
-                );
-            }
-            $this->redirectAfterFailure($result, $ruleId);
-        } catch (LocalizedException $e) {
-            $this->messageManager->addErrorMessage(
-                $e->getMessage()
-            );
-            $this->redirectAfterFailure($result, $ruleId);
+            $rule = $this->saveRuleData->execute($this->getRequest());
+            return $this->resolveResult($result, (int)$rule->getId());
         } catch (\Exception $e) {
-            $this->logger->critical($e->getMessage());
-            $this->messageManager->addErrorMessage(
-                (string)__('We can\'t save the rule right now. Please review the log and try again.')
-            );
-            $this->redirectAfterFailure($result, $ruleId);
+            $this->resolveException->execute($e, self::ACTION_NAME);
         }
-        return $result;
+        return $this->resolveFailureResult($result, $ruleId);
     }
 
     /**
-     * Retrieve redirect url after save
+     * Resolve success result
      *
      * @param Redirect $result
      * @param int $ruleId
-     * @return void
+     * @return ResultInterface
      */
-    private function redirectAfterSuccess(Redirect $result, $ruleId): void
+    private function resolveResult(Redirect $result, int $ruleId): ResultInterface
     {
-        $path = '*/*/';
-        $params = [];
-        if ($this->getRequest()->getParam('back')) {
-            $path = '*/*/edit';
-            $params = ['_current' => true, RuleInterface::RULE_ID => $ruleId];
-        } elseif ($this->getRequest()->getParam('redirect_to_new')) {
-            $path = '*/*/new';
-            $params = ['_current' => true];
-        }
-        $result->setPath($path, $params);
+        return empty($this->getRequest()->getParam('back'))
+            ? $result->setPath('*/*/index')
+            : $result->setPath('*/*/edit', $this->getParams($ruleId));
     }
 
     /**
-     * Retrieve redirect url after unsuccessful save
+     * Resolve failure result
      *
      * @param Redirect $result
      * @param int|null $ruleId
-     * @return void
+     * @return ResultInterface
      */
-    private function redirectAfterFailure(Redirect $result, $ruleId = null): void
+    private function resolveFailureResult(Redirect $result, int $ruleId = null): ResultInterface
     {
-        if (null === $ruleId) {
-            $result->setPath('*/*/new');
-        } else {
-            $result->setPath(
-                '*/*/edit',
-                [RuleInterface::RULE_ID => $ruleId, '_current' => true]
-            );
-        }
+        return empty($ruleId)
+            ? $result->setPath('*/*/new')
+            : $result->setPath('*/*/edit', $this->getParams($ruleId));
+    }
+
+    /**
+     * Retrieve params
+     *
+     * @param int $ruleId
+     * @return mixed[]
+     */
+    private function getParams(int $ruleId): array
+    {
+        return [
+            RuleInterface::RULE_ID => $ruleId,
+            '_current' => true
+        ];
     }
 }

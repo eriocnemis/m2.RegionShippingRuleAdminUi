@@ -7,14 +7,12 @@ declare(strict_types=1);
 
 namespace Eriocnemis\RegionShippingRuleAdminUi\Controller\Adminhtml\Shipping\Rule;
 
-use Psr\Log\LoggerInterface;
 use Magento\Backend\App\Action;
 use Magento\Backend\App\Action\Context;
 use Magento\Framework\App\Action\HttpPostActionInterface;
 use Magento\Framework\Controller\Result\JsonFactory;
 use Magento\Framework\Controller\ResultInterface;
-use Magento\Framework\Exception\LocalizedException;
-use Magento\Framework\Validation\ValidationException;
+use Eriocnemis\Core\Exception\ResolveExceptionInterface;
 use Eriocnemis\RegionShippingRuleApi\Api\Data\RuleInterface;
 use Eriocnemis\RegionShippingRuleApi\Api\ValidateRuleInterface;
 use Eriocnemis\RegionShippingRuleAdminUi\Api\ResolveRuleInterface;
@@ -28,6 +26,11 @@ class Validate extends Action implements HttpPostActionInterface
      * Authorization level of a basic admin session
      */
     const ADMIN_RESOURCE = 'Eriocnemis_Region::shipping_rule_edit';
+
+    /**
+     * Action name constant
+     */
+    const ACTION_NAME = 'validate';
 
     /**
      * @var ResolveRuleInterface
@@ -45,9 +48,9 @@ class Validate extends Action implements HttpPostActionInterface
     private $resultJsonFactory;
 
     /**
-     * @var LoggerInterface
+     * @var ResolveExceptionInterface
      */
-    private $logger;
+    private $resolveException;
 
     /**
      * Initialize controller
@@ -56,19 +59,19 @@ class Validate extends Action implements HttpPostActionInterface
      * @param JsonFactory $resultJsonFactory
      * @param ResolveRuleInterface $resolveRule
      * @param ValidateRuleInterface $validateRule
-     * @param LoggerInterface $logger
+     * @param ResolveExceptionInterface $resolveException
      */
     public function __construct(
         Context $context,
         JsonFactory $resultJsonFactory,
         ResolveRuleInterface $resolveRule,
         ValidateRuleInterface $validateRule,
-        LoggerInterface $logger
+        ResolveExceptionInterface $resolveException
     ) {
         $this->resolveRule = $resolveRule;
         $this->validateRule = $validateRule;
         $this->resultJsonFactory = $resultJsonFactory;
-        $this->logger = $logger;
+        $this->resolveException = $resolveException;
 
         parent::__construct(
             $context
@@ -90,16 +93,12 @@ class Validate extends Action implements HttpPostActionInterface
             $rule = $this->resolveRule->execute($ruleId, $data);
             $this->validateRule->execute($rule);
             $response = ['error' => false];
-        } catch (ValidationException $e) {
-            $response['messages'] = [];
-            foreach ($e->getErrors() as $error) {
-                $response['messages'][] = $error->getMessage();
-            }
-        } catch (LocalizedException $e) {
-            $response['message'] = $e->getMessage();
         } catch (\Exception $e) {
-            $this->logger->critical($e->getMessage());
-            $response['message'] = __('We can\'t validate the rule right now. Please review the log and try again.');
+            $this->resolveException->execute($e, self::ACTION_NAME);
+            $response['messages'] = [];
+            foreach ($this->messageManager->getMessages(true)->getErrors() as $message) {
+                $response['messages'][] = $message->getText();
+            }
         }
         return $this->resultJsonFactory->create()->setData($response);
     }

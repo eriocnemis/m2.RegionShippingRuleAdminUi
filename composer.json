@@ -18,6 +18,7 @@
         "magento/module-config": "101.2.*",
         "magento/module-ui": "101.2.*",
         "magento/module-backend": "102.0.*",
+        "eriocnemis/core-exception": "2.4.*",
         "eriocnemis/module-region": "2.4.2",
         "eriocnemis/module-region-api": "2.4.2",
         "eriocnemis/module-region-admin-ui": "2.4.2",

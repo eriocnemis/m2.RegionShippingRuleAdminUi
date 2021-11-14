@@ -9,6 +9,7 @@
     xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
     <!-- preference -->
     <preference for="Eriocnemis\RegionShippingRuleAdminUi\Api\ResolveRuleInterface" type="Eriocnemis\RegionShippingRuleAdminUi\Model\ResolveRule"/>
+    <preference for="Eriocnemis\RegionShippingRuleAdminUi\Api\SaveRuleDataInterface" type="Eriocnemis\RegionShippingRuleAdminUi\Model\SaveRuleData"/>
     <!-- buttons configurations -->
     <virtualType name="EriocnemisRegionShippingRuleSaveButton" type="Eriocnemis\RegionAdminUi\Ui\Component\Control\SaveSplitButton">
         <arguments>
